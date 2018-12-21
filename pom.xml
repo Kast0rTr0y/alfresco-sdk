@@ -131,7 +131,6 @@
         <maven.compiler.target>1.7</maven.compiler.target>
         <maven.archetype.version>3.0.0</maven.archetype.version>
         <alfresco.sdk.parent.version>${project.version}</alfresco.sdk.parent.version>
-        <alfresco.sdk.tests.exclude>*/*-enterprise*/*</alfresco.sdk.tests.exclude>
 
         <alfresco.bomDependency.artifactId>acs-community-packaging</alfresco.bomDependency.artifactId>
         <alfresco.platform.version>6.0.7-ga</alfresco.platform.version>
@@ -181,9 +180,6 @@
             <testResource>
                 <filtering>true</filtering>
                 <directory>src/test/resources</directory>
-                <excludes>
-                    <exclude>${alfresco.sdk.tests.exclude}</exclude>
-                </excludes>
             </testResource>
         </testResources>
 
@@ -243,10 +239,13 @@
         </profile>
 
         <profile>
-            <id>enterprise-tests</id>
+            <id>enterprise-60</id>
             <properties>
-                <!-- Sets it to empty, so that also enterprise tests are run -->
-                <alfresco.sdk.tests.exclude />
+                <alfresco.bomDependency.artifactId>acs-packaging</alfresco.bomDependency.artifactId>
+                <alfresco.platform.version>6.0.0.2</alfresco.platform.version>
+                <alfresco.share.version>6.0</alfresco.share.version>
+                <alfresco.platform.docker.image>alfresco/alfresco-content-repository</alfresco.platform.docker.image>
+                <alfresco.share.docker.image>alfresco/alfresco-share</alfresco.share.docker.image>
             </properties>
         </profile>
 
@@ -320,6 +319,32 @@
                     </plugin>
                 </plugins>
             </reporting>
+        </profile>
+
+        <profile>
+            <id>windows</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                </os>
+            </activation>
+            <properties>
+                <!-- Define the project lifecycle management script (required for archetype tests) -->
+                <run.exec>run.bat</run.exec>
+            </properties>
+        </profile>
+
+        <profile>
+            <id>non-windows</id>
+            <activation>
+                <os>
+                    <family>!Windows</family>
+                </os>
+            </activation>
+            <properties>
+                <!-- Define the project lifecycle management script (required for archetype tests) -->
+                <run.exec>run.sh</run.exec>
+            </properties>
         </profile>
 
         <!-- Attempt (failed) to retain run.sh permissions. Zip files are bad at this, full stop.
